@@ -1,0 +1,13 @@
+`ml-100k` folder contains the public MovieLens 100 000 ratings data set.
+It can be downloaded using `dl_movie_lens.py` after uncommenting the necessary lines.
+`extract_from_data.py` defines the functions and objects used to parse the data
+set.
+`factor.py` generates the movies and users files.
+As an example, `MoviesX.py` contains 1682 movies represented by vectors of
+dimension *X*. They are used in the experiments: when an algorithm is run with
+parameter *d = X*, a user is chosen in `UsersX.txt` and *K* movies are picked
+in `MoviesX.py`.
+
+If you want to generate other Movies or Users files, you will need to run 
+`install-additional-libraries.sh` before running `factor.py` with dimension of
+your choice.
