@@ -5,6 +5,7 @@ import random
 import time
 import math
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import multiprocessing as mp
 rng = np.random.RandomState(1)
 random.seed(1)
@@ -207,7 +208,7 @@ def plot_lines(key_size, legend_vals, legend_title, xlabel, x_vals, data, xlog, 
         plt.figure(figsize=(6, 5))
         plt.rcParams.update({'font.size':14})
 
-        markers = ['.', 'P', '*', 'd', 'x', 'o']
+        markers = ['.', 'v', '*', 'd', 'x', 'o']
 
         for key in data:
                 plt.plot(x_vals, data[key], marker=markers.pop())
@@ -231,22 +232,26 @@ def plot_lines(key_size, legend_vals, legend_title, xlabel, x_vals, data, xlog, 
 def plot_stack_lines(scenario, xlabel, x_vals, data, DIR):
         plt.figure(figsize=(6,5))
         plt.rcParams.update({'font.size':16})
+        fig, ax = plt.subplots()
 
-        # Legend
-        left, right = plt.xlim()
-        plt.xlim(left=0.7, right=6.3)
-        hatches=["o", "x","+"]
-        plt.bar([1],[1],2, color='lightblue', label='Step (4).i', hatch=hatches[2])
-        plt.bar([1],[1],2, color='pink', label='Step (3).ii', hatch=hatches[1])
-        plt.bar([1],[1],2, color='beige', label='Step (3).i', hatch=hatches[0])
+        colors = ["beige", "pink", "lightblue"]
+        hatches=["o", "x", "+"]
+        labels = ["Step(3).i", "Step (3).ii", "Step (4).i"]
 
-        stacks = plt.stackplot(x_vals, data["theta"], data["Bi"], data["dec"], colors=['beige', 'pink', 'lightblue'])
+        # Plot stacked lines
+        stacks = ax.stackplot(x_vals, data["theta"], data["Bi"], data["dec"], colors=colors, edgecolor=['black', 'black', 'black'])
 
+        # Add hatching on the figure
         for stack, hatch in zip(stacks, hatches):
                 stack.set_hatch(hatch)
-        plt.legend()
-        plt.xlabel(xlabel)
 
+        # Custom legend
+        leg1 = mpatches.Patch(facecolor=colors[2], alpha=1, hatch=hatches[2],label=labels[2])
+        leg2 = mpatches.Patch(facecolor=colors[1], alpha=1, hatch=hatches[1],label=labels[1])
+        leg3 = mpatches.Patch(facecolor=colors[0], alpha=1, hatch=hatches[0],label=labels[0])
+        ax.legend(handles=[leg1, leg2, leg3])
+        
+        plt.xlabel(xlabel)
         plt.xticks(x_vals)
         plt.ylabel('Time (seconds)')
 
