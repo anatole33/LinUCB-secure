@@ -241,7 +241,7 @@ def plot_stack_lines(scenario, xlabel, x_vals, data, DIR):
         # Plot stacked lines
         stacks = ax.stackplot(x_vals, data["theta"], data["Bi"], data["dec"], colors=colors, edgecolor=['black', 'black', 'black'])
 
-        # Add hatching on the figure
+        # Add hatch on the figure
         for stack, hatch in zip(stacks, hatches):
                 stack.set_hatch(hatch)
 
