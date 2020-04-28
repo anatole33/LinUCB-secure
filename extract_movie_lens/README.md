@@ -1,3 +1,6 @@
+We used Google Cloab recommendation system code to generate the matrices of users
+and movies: https://github.com/google/eng-edu/blob/master/ml/recommendation-systems/recommendation-systems.ipynb which uses Tensorflow library.
+
 `ml-100k` folder contains the public MovieLens 100 000 ratings data set.
 It can be downloaded using `dl_movie_lens.py` after uncommenting the necessary lines.
 `extract_from_data.py` defines the functions and objects used to parse the data
