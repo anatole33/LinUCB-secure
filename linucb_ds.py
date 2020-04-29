@@ -125,8 +125,15 @@ class Player():
                 self.s = s
 
         # Key switching
+        # Add a random value to the encrypted sum, then
+        # let the comparator decrypt it and encrypt it
+        # again with the DataClient public key
         def get_re_encrypt(self):
                 t = time.time()
+                # Setting rand to a value too high will
+                # erase s: after the key switching the result will
+                # be 0. Rand is set to 10^10. If s gets too high then
+                # in turn increase rand.
                 rand = random.uniform(0, pow(10,10))
                 randomized_s = self.s + rand
                 self.time += time.time() - t
@@ -194,7 +201,8 @@ def linucb_ds(N, delta, gamma, d, theta, K, list_K, key_size=2048, n=None):
 
         t_stop = time.time()
         result = dict()
-        result["sum"] = DC.s
+        # Round the imprecision of float
+        result["sum"] = f"{DC.s:.{5}f}"
         result["time"] = t_stop - t_start
         result["time DC"] = DC.time
         result["time DO"] = DO.time

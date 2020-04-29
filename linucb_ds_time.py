@@ -109,7 +109,8 @@ def linucb_ds_t(N, delta, gamma, d, theta, K, list_K, key_size=2048, n=None):
 
         t_stop = time.time()
         result = dict()
-        result["sum"] = DC.s
+        # Round the imprecision of float
+        result["sum"] = f"{DC.s:.{5}f}"
         result["time"] = t_stop - t_start
         result["time of theta"] = P.time_theta
         result["time of Bi"] = P.time_Bi

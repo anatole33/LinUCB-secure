@@ -105,7 +105,8 @@ def linucb(N, delta, gamma, d, theta, K, list_K, key_size=None, n=None):
 
         t_stop = time.time()
         result = dict()
-        result["sum"] = DC.s
+        # Round the imprecision of float
+        result["sum"] = f"{DC.s:.{5}f}"
         result["time"] = t_stop - t_start
         result["time DC"] = DC.time
         result["time DO"] = DO.time
