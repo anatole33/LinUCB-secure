@@ -110,7 +110,8 @@ def spectralucb_ds_p(N, delta, lamb, theta, K, A, Q, B, C, key_size=2048, n=1):
 
         t_stop = time.time()
         result = dict()
-        result["sum"] = DC.s
+        # Round the imprecision of float
+        result["sum"] = f"{DC.s:.{5}f}"
         result["time"] = t_stop - t_start
         result["time of theta"] = P.time_theta
         result["time of Bi"] = P.time_Bi
