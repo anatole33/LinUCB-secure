@@ -112,6 +112,11 @@ def linucb(N, delta, gamma, d, theta, K, list_K, key_size=None, n=None):
         result["time DO"] = DO.time
         result["time C"] = C.time
 
+        # This is just to match the random generator progression with
+        # secure versions when performing several runs consecutively,
+        # as there is no key switching in here.
+        rand = random.uniform(0, pow(10,10))
+
         return result
 
 if __name__ == "__main__":
