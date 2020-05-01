@@ -106,7 +106,7 @@ def linucb(N, delta, gamma, d, theta, K, list_K, key_size=None, n=None):
         t_stop = time.time()
         result = dict()
         # Round the imprecision of float
-        result["sum"] = f"{DC.s:.{5}f}"
+        result["sum"] = float(f"{DC.s:.{5}f}")
         result["time"] = t_stop - t_start
         result["time DC"] = DC.time
         result["time DO"] = DO.time
@@ -116,7 +116,7 @@ def linucb(N, delta, gamma, d, theta, K, list_K, key_size=None, n=None):
         # secure versions when performing several runs consecutively,
         # as there is no key switching in here.
         rand = random.uniform(0, pow(10,10))
-
+        
         return result
 
 if __name__ == "__main__":

@@ -28,12 +28,12 @@ class Spectral_Cloud(Cloud):
 
                 T = np.add(self.A, self.lamb * np.identity(self.K))
                 d = 0
-                for i in range(K):
+                for i in range(self.K):
                         if (i-1)*self.A[i][i] <= self.N / math.log(1 + (self.N/self.lamb)):
                                 d = i
 
                 # Pull an arm at random and start updating the sum of rewards
-                x = random.randint(0,K-1)
+                x = random.randint(0, self.K-1)
                 s = pull(self.Q[x], self.theta)
                 # Initialize list of rewards
                 list_r = [s]
@@ -49,7 +49,7 @@ class Spectral_Cloud(Cloud):
 
                         # Constant term of the exploration term
                         E = 2*self.B*math.sqrt(d*math.log(1 + t/self.lamb) + 2*math.log(1/self.delta)) + self.C
-                        for i in range(K):
+                        for i in range(self.K):
                                 list_B[i] = O.dot(self.Q[i]) + E * norm(self.Q[i], inv_V)
                         # Randomly choose one of the best arms if their are many equals 
                         o = generate_permutation(self.K)
@@ -83,7 +83,7 @@ def spectral_ucb(N, delta, lamb, theta, K, A, Q, B, C, key_size=None, n=None):
         t_stop = time.time()
         result = dict()
         # Round the imprecision of float
-        result["sum"] = f"{DC.s:.{5}f}"
+        result["sum"] = float(f"{DC.s:.{5}f}")
         result["time"] = t_stop - t_start
         result["time DC"] = DC.time
         result["time DO"] = DO.time
@@ -93,3 +93,12 @@ def spectral_ucb(N, delta, lamb, theta, K, A, Q, B, C, key_size=None, n=None):
 
 if __name__ == "__main__":
         spectral_run_experiment(spectral_ucb)
+
+# ------- Test --------
+"""
+K = 15; N = 15
+B = 0.01; C = math.log(N); delta = 0.001; lamb = 0.01
+file_name = "extract_movie_lens/Movies3.txt"
+A, Q = generate_all(K, 0, file_name); theta = np.array([3] * K)
+print(spectral_ucb(N, delta, lamb, theta, K, A, Q, B, C))
+"""

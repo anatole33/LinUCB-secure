@@ -178,7 +178,7 @@ def get_data_from_file(k, l, file_name):
                 return np.array(res)                       
 
 # Take as input the file containing 'nb_runs' results of an algorithm.
-# Returns aggregate_time, the mean computation time, and aggregates,
+# Return aggregate_time, the mean computation time, and aggregates,
 # a dictionary of mean time of every participant
 def parse_json_output(file_name):
         with open(file_name, 'r') as f:

@@ -2,13 +2,52 @@ from tools import *
 
 #       Additional functions specific to SpectralUCB and secure versions
 
-# The functions below generate the two input matrices of SpectralUCB.
+# Generate the two input matrices of SpectralUCB
 # K is the number of nodes/arms = size of the matrices
-def generate_W(K):
+
+# Generate a random matrix
+def generate_random_W(K):
         W = np.zeros((K,K))
         for i in range(K):
                 for j in range(K):
                         W[i][j] = random.randint(0,5)
+        return W
+
+# Compute the distance between two vectors (movies or arms)
+def distance(u, v):
+        size = len(u)
+        assert size == len(v), 'Size of vectors does not match'
+        dist = 0
+        for i in range(size):
+                dist += (u[i] - v[i])**2
+        return dist
+        
+# Take as input a file containing movie vectors and select K movies
+# starting from index_movies position.
+# Compute the distance between each movie and generate W, a matrix
+# whose element (i,j) is 1 if movie j is among the closest movies
+# to movie i, else (i,j) is 0.
+def generate_W(K, index_movies, file_name):
+        list_movies = get_data_from_file(index_movies, index_movies + K, file_name)
+        number_max = math.ceil(K/10)
+        list_max_arms = list()
+        list_dist = list()
+        for i in range(K):
+                list_max_arms.append(list())
+                list_dist.append(list())
+                for j in range(K):
+                        if i != j:
+                                dist = distance(list_movies[i], list_movies[j])
+                                list_dist[i].append(dist)
+                                list_max_arms[i].append(j)
+                for k in range(K - (number_max + 1)):
+                        index_min = list_dist[i].index(max(list_dist[i]))
+                        list_max_arms[i].pop(index_min)
+                        list_dist[i].pop(index_min)
+        W = np.zeros((K,K))
+        for i in range(K):
+                for j in range(number_max):
+                        W[i][list_max_arms[i][j]] = 1
         return W
 
 def generate_D(W, K):
@@ -22,8 +61,9 @@ def generate_L(D, W):
         return np.add(D, -W)
 
 def generate_eigen(L, K):
+        # Generate a list of eigenvalues and a matrix of eigenvectors
         values, vectors = np.linalg.eig(L)
-        # Then sort the values, and the columns of the vectors in accordance
+        # Sort the values, and the columns of the vector matrix in accordance
         tmp = [(values[i],i) for i in range(K)]
         tmp.sort()
         values_sorted, permutation = zip(*tmp)
@@ -47,8 +87,9 @@ def generate_decomposition(L, K):
 
 # Use all above functions to return a diagonal matrix of eigenvalues
 # A and a matrix of eigenvectors as columns Q
-def generate_all(K):
-        W = generate_W(K)
+# A and Q are input elements of SpectralUCB. The arms are the rows of Q
+def generate_all(K, index_movies, file_name):
+        W = generate_W(K, index_movies, file_name)
         D = generate_D(W, K)
         L = generate_L(D, W)
         return generate_decomposition(L, K)
@@ -96,8 +137,16 @@ def spectral_run_experiment(algo):
         delta = 0.001
         B = 0.01
         C = math.log(N)
-        A, Q = generate_all(K)
-        theta = np.array(range(1, K+1))
+
+        # Use a user and K movies from MovieLens data to create
+        # a theta and two matrices A and Q, input elements of the algorithm.
+        # The arms are the rows of Q
+        index_user = int(sys.argv[8])
+        index_movies = int(sys.argv[9])
+        theta = get_data_from_file(index_user, index_user + 1,
+                "extract_movie_lens/Users" + str(K) + ".txt")
+        A, Q = generate_all(K, index_movies,
+                "extract_movie_lens/Movies" + str(K) + ".txt")
 
         result = dict()
         for run in range(nb_runs):

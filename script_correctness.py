@@ -17,10 +17,10 @@ def parse_json_file(file_name):
         with open(file_name, 'r') as f:
                 result = json.load(f)
         nb_runs = len(result)
-        res = list()
+        list_sum = list()
         for run in range(nb_runs):
-            res.append(result[str(run)]["sum"])
-        return res
+            list_sum.append(result[str(run)]["sum"])
+        return list_sum
 
 nb_runs = 3
 key_size = 512
