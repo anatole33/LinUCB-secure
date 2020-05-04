@@ -39,7 +39,7 @@ class Spectral_Player(Player_p):
                 # Initialize list of rewards
                 list_r = [s]
                 # Initialize list of rows of Q
-                list_x = [self.Q[0]]
+                list_x = [self.Q[x]]
                 # Create the object for parallelization
                 quotient_K = self.K // self.n
                 remainder_K = self.K % self.n
@@ -80,7 +80,7 @@ class Spectral_Player(Player_p):
                         r = pull(x, self.theta)
                         s += r
                         list_r.append(r)
-                        list_x.append(self.Q[t])
+                        list_x.append(x)
                         self.time += time.time() - ti
                 p.close()
                 self.s = s                
@@ -92,7 +92,6 @@ class Spectral_Player(Player_p):
 # key_size is the length of Paillier keys
 # n is the number of cores for parallelization
 def spectralucb_ds_p(N, delta, lamb, theta, K, A, Q, B, C, key_size=2048, n=1):
-        assert K >= N , 'budget too big'
         t_start = time.time()
 
         DC = DataClient(N, key_size)
@@ -128,8 +127,9 @@ if __name__ == "__main__":
         
 # --- tests
 """
-K = 15; N = 15
+K = 15; N = 50
 B = 0.01; C = math.log(N); delta = 0.001; lamb = 0.01
-A, Q = generate_all(K); theta = np.array([3] * K)
+file_name = "extract_movie_lens/Movies3.txt"
+A, Q = generate_all(K, 0, file_name); theta = np.array([3] * K)
 print(spectralucb_ds_p(N, delta, lamb, theta, K, A, Q, B, C, 512, 2))
 """

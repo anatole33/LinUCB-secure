@@ -38,7 +38,7 @@ class Spectral_Cloud(Cloud):
                 # Initialize list of rewards
                 list_r = [s]
                 # Initialize list of rows of Q
-                list_x = [self.Q[0]]
+                list_x = [self.Q[x]]
                 # Exploration / exploitation phase
                 for t in range(1, self.N):
                         X = np.transpose(np.array(list_x))
@@ -58,7 +58,7 @@ class Spectral_Cloud(Cloud):
                         r = pull(x, self.theta)
                         s += r
                         list_r.append(r)
-                        list_x.append(self.Q[t])
+                        list_x.append(x)
                 self.time += time.time() - ti
                 return s
 
@@ -69,7 +69,7 @@ class Spectral_Cloud(Cloud):
 # key_size is the length of Paillier keys
 # n is the number of cores for parallelization
 def spectral_ucb(N, delta, lamb, theta, K, A, Q, B, C, key_size=None, n=None):
-        assert N <= K, 'Budget too big'
+        #assert N <= K, 'Budget too big'
         t_start = time.time()
 
         DC = DataClient(N)
@@ -95,8 +95,9 @@ if __name__ == "__main__":
         spectral_run_experiment(spectral_ucb)
 
 # ------- Test --------
+
 """
-K = 15; N = 15
+K = 15; N = 50
 B = 0.01; C = math.log(N); delta = 0.001; lamb = 0.01
 file_name = "extract_movie_lens/Movies3.txt"
 A, Q = generate_all(K, 0, file_name); theta = np.array([3] * K)
