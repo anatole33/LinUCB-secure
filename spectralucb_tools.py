@@ -136,7 +136,6 @@ def spectral_run_experiment(algo):
         lamb = 0.01
         delta = 0.001
         B = 0.01
-        C = math.log(N)
 
         # Use a user and K movies from MovieLens data to create
         # a theta and two matrices A and Q, input elements of the algorithm.
@@ -151,7 +150,7 @@ def spectral_run_experiment(algo):
         result = dict()
         for run in range(nb_runs):
                 print ("run", run + 1)
-                result[run] = algo(N, delta, lamb, theta, K, A, Q, B, C, key_size, n_cores)
+                result[run] = algo(N, delta, lamb, theta, K, A, Q, B, key_size, n_cores)
 
         with open(output_file, 'w') as fp:
                 json.dump(result, fp)                      

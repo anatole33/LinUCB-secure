@@ -6,10 +6,10 @@ from spectralucb_tools import *
 # Import DataClient and DataOWner from linucb
 
 class Spectral_Cloud(Cloud):
-        # delta, lamb, B and C are constant parameters, used for the exploration term
+        # delta, lamb and B are constant parameters, used for the exploration term
         # K is the number of arms/nodes, A is the diagonal matrix of eigen values and
         # Q is the matrix of eigen vectors as columns
-        def __init__(self, delta, lamb, K, A, Q, B, C):
+        def __init__(self, delta, lamb, K, A, Q, B):
                 self.time = 0
                 t = time.time()
                 self.delta = delta
@@ -18,7 +18,6 @@ class Spectral_Cloud(Cloud):
                 self.A = A
                 self.Q = Q
                 self.B = B
-                self.C = C
                 self.time += time.time() - t
     
         def spectral_compute(self):
@@ -48,7 +47,8 @@ class Spectral_Cloud(Cloud):
                         O = inv_V.dot(X).dot(R)
 
                         # Constant term of the exploration term
-                        E = 2*self.B*math.sqrt(d*math.log(1 + t/self.lamb) + 2*math.log(1/self.delta)) + self.C
+                        E = 2 * self.B * math.sqrt(d * math.log(1 + t/self.lamb) +
+                                2 * math.log(1/self.delta)) + math.log(t)
                         for i in range(self.K):
                                 list_B[i] = O.dot(self.Q[i]) + E * norm(self.Q[i], inv_V)
                         # Randomly choose one of the best arms if their are many equals 
@@ -68,13 +68,12 @@ class Spectral_Cloud(Cloud):
 # Q is the matrix of eigen vectors as columns
 # key_size is the length of Paillier keys
 # n is the number of cores for parallelization
-def spectral_ucb(N, delta, lamb, theta, K, A, Q, B, C, key_size=None, n=None):
-        #assert N <= K, 'Budget too big'
+def spectral_ucb(N, delta, lamb, theta, K, A, Q, B, key_size=None, n=None):
         t_start = time.time()
 
         DC = DataClient(N)
         DO = DataOwner(theta)
-        C = Spectral_Cloud(delta, lamb, K, A, Q, B, C)
+        C = Spectral_Cloud(delta, lamb, K, A, Q, B)
 
         C.receive_theta(DO.outsource_theta())
         C.receive_budget(DC.send_budget())
@@ -93,13 +92,3 @@ def spectral_ucb(N, delta, lamb, theta, K, A, Q, B, C, key_size=None, n=None):
 
 if __name__ == "__main__":
         spectral_run_experiment(spectral_ucb)
-
-# ------- Test --------
-
-"""
-K = 15; N = 50
-B = 0.01; C = math.log(N); delta = 0.001; lamb = 0.01
-file_name = "extract_movie_lens/Movies3.txt"
-A, Q = generate_all(K, 0, file_name); theta = np.array([3] * K)
-print(spectral_ucb(N, delta, lamb, theta, K, A, Q, B, C))
-"""

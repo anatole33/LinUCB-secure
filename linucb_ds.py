@@ -57,6 +57,7 @@ class Player():
                 self.pk_comp = pk_comp
                 self.delta = delta
                 self.gamma = gamma
+                self.R = 0.01
                 self.d = d
                 self.K = K
                 self.list_K = list_K
@@ -108,8 +109,9 @@ class Player():
                         inv = np.linalg.inv(A + self.gamma * np.identity(self.d))
                         O = inv.dot(b)
                         for i in range(self.K):
-                                exploration_term = math.sqrt(self.d * self.list_K[i].dot(inv).dot(self.list_K[i])
-                                        * math.log(t) * math.log ((t**2)/self.delta))
+                                exploration_term = 2 * self.R * math.sqrt(self.d *
+                                        self.list_K[i].dot(inv).dot(self.list_K[i]) *
+                                        math.log(t) * math.log ((t**2)/self.delta)) + math.log(t)
                                 list_B[i] = self.list_K[i].dot(O) + exploration_term
 
                         # Don't add to self the time of decryption of Comp

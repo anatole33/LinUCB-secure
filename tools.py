@@ -76,23 +76,23 @@ def compute_theta(i, inv, b, quotient, remainder):
 # arms by n the number of cores.
 # In case the remainder is not zero, the first cores compute one more B
 # until remainder is consumed.
-def compute_B(i, list_K, O, inv, t, d, delta, quotient, remainder):
+def compute_B(i, list_K, O, inv, t, d, delta, R, quotient, remainder):
         res = []
         if remainder > 0:
                 if (remainder - i) > 0:
                         for x in range(i * quotient + i, (i+1) * quotient + i + 1):
-                                exploration_term = math.sqrt(d * list_K[x].dot(inv).dot(list_K[x])
-                                        * math.log(t) * math.log((t**2)/delta))
+                                exploration_term = 2 * R * math.sqrt(d * list_K[x].dot(inv).dot(
+                                        list_K[x]) * math.log(t) * math.log((t**2)/delta)) + math.log(t)
                                 res.append(list_K[x].dot(O) + exploration_term)
                 else:
                         for x in range(i * quotient + remainder, (i+1) * quotient + remainder):
-                                exploration_term = math.sqrt(d * list_K[x].dot(inv).dot(list_K[x])
-                                        * math.log(t) * math.log((t**2)/delta))
+                                exploration_term = 2 * R * math.sqrt(d * list_K[x].dot(inv).dot(
+                                        list_K[x]) * math.log(t) * math.log((t**2)/delta)) + math.log(t)
                                 res.append(list_K[x].dot(O) + exploration_term)
         else:
                 for x in range(i * quotient, (i + 1) * quotient):
-                        exploration_term = math.sqrt(d * list_K[x].dot(inv).dot(list_K[x])
-                                        * math.log(t) * math.log((t**2)/delta))                        
+                        exploration_term = 2 * R * math.sqrt(d * list_K[x].dot(inv).dot(
+                                list_K[x]) * math.log(t) * math.log((t**2)/delta)) * math.log(t)
                         res.append(list_K[x].dot(O) + exploration_term)
         return res
         
@@ -117,8 +117,8 @@ def decrypt_B(i, list_B, sk, quotient, remainder):
 
 #  -------  Plot functions  --------
 
-# Run the experiment defined in the function for a given algorithm
-# and write the results of nb_runs executions in a given file
+# Run the experiment with parameters defined in the function for
+# a given algorithm and write the results of nb_runs executions in a given file
 def run_experiment(algo):
         nb_runs = int(sys.argv[1])
         N =  int(sys.argv[2])

@@ -16,6 +16,7 @@ class Player_p(Player):
                 self.pk_comp = pk_comp
                 self.delta = delta
                 self.gamma = gamma
+                self.R = 0.01
                 self.d = d
                 self.K = K
                 self.list_K = list_K
@@ -79,8 +80,8 @@ class Player_p(Player):
                         # Time the computation of the Bi
                         t2 = time.time()
                         list_B = []
-                        res2 = p.starmap(compute_B, [(i, self.list_K, O, inv, t,
-                                self.d, self.delta, quotient_K, remainder_K) for i in range(self.n)])
+                        res2 = p.starmap(compute_B, [(i, self.list_K, O, inv, t, self.d,
+                                self.delta, self.R, quotient_K, remainder_K) for i in range(self.n)])
                         for i in range(self.n):
                                 list_B += res2[i]
                         self.time_Bi += time.time() - t2

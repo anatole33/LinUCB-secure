@@ -6,7 +6,7 @@ from spectralucb_tools import *
 # Import DataClient, DataOwner and Comparator from linucb_ds
 
 class Spectral_Player(Player):
-        def __init__(self, pk_comp, delta, lamb, K, A, Q, B, C):
+        def __init__(self, pk_comp, delta, lamb, K, A, Q, B):
                 self.time = 0
                 t = time.time()
                 self.pk_comp = pk_comp
@@ -16,7 +16,6 @@ class Spectral_Player(Player):
                 self.A = A
                 self.Q = Q
                 self.B = B
-                self.C = C
                 self.time += time.time() - t
                 
         def spectral_compute(self):
@@ -46,7 +45,8 @@ class Spectral_Player(Player):
                         O = inv_V.dot(X).dot(R)
 
                         # Constant term of the exploration term
-                        E = 2*self.B*math.sqrt(d*math.log(1 + t/self.lamb) + 2*math.log(1/self.delta)) + self.C
+                        E = 2 * self.B * math.sqrt(d * math.log(1 + t/self.lamb) +
+                                2 * math.log(1/self.delta)) + math.log(t)
                         for i in range(self.K):
                                 list_B[i] = O.dot(self.Q[i]) + E * norm(self.Q[i], inv_V)
                         # Don't add to self the time of Decryption of Comp
@@ -67,7 +67,7 @@ class Spectral_Player(Player):
 # Q is the matrix of eigen vectors as columns
 # key_size is the length of Paillier keys
 # n is the number of cores for parallelization
-def spectralucb_ds(N, delta, lamb, theta, K, A, Q, B, C, key_size=2048, n=None):
+def spectralucb_ds(N, delta, lamb, theta, K, A, Q, B, key_size=2048, n=None):
         t_start = time.time()
 
         DC = DataClient(N, key_size)
@@ -75,7 +75,7 @@ def spectralucb_ds(N, delta, lamb, theta, K, A, Q, B, C, key_size=2048, n=None):
         comparator = Comp(K, pk_dc, key_size)
         pk_comp = comparator.share_pk_comp()
         DO = DataOwner(pk_comp, theta)
-        P = Spectral_Player(pk_comp, delta, lamb, K, A, Q, B, C)
+        P = Spectral_Player(pk_comp, delta, lamb, K, A, Q, B)
         P.comparator = comparator
 
         P.receive_theta(DO.outsource_theta())
@@ -97,10 +97,3 @@ def spectralucb_ds(N, delta, lamb, theta, K, A, Q, B, C, key_size=2048, n=None):
 
 if __name__ == "__main__":
         spectral_run_experiment(spectralucb_ds)
-"""
-K = 15; N = 50
-B = 0.01; C = math.log(N); delta = 0.001; lamb = 0.01
-file_name = "extract_movie_lens/Movies3.txt"
-A, Q = generate_all(K, 0, file_name); theta = np.array([3] * K)
-print(spectralucb_ds(N, delta, lamb, theta, K, A, Q, B, C, 512))
-"""
