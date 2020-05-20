@@ -45,6 +45,12 @@ class Player_t(Player):
 
         def compute(self):
                 ti = time.time()
+                # Compute the maximum norm among the arms
+                norm_max = 0
+                for arm in self.list_K:
+                        norm = arm.dot(arm)
+                        if norm > norm_max:
+                                norm_max = norm
                 # List of the B of each arm. It's the upper bound term
                 list_B = [0] * self.K
                 b = np.array([self.pk_comp.encrypt(0)] * self.d)
@@ -68,11 +74,10 @@ class Player_t(Player):
                         
                         # Time the computation of the Bi
                         t2 = time.time()
-                        #exploration_term = math.sqrt(2*self.d*(1+2*math.log(t**2/self.delta)))
+                        exploration_term = self.R * math.sqrt(self.d * math.log((1 + (t *
+                                        norm_max)/self.gamma)/self.delta)) + math.sqrt(
+                                        self.gamma) * math.log(t)
                         for i in range(self.K):
-                                exploration_term = 2 * self.R * math.sqrt(self.d *
-                                        self.list_K[i].dot(inv).dot(self.list_K[i]) *
-                                        math.log(t) * math.log ((t**2)/self.delta)) + math.log(t)
                                 list_B[i] = self.list_K[i].dot(O) + exploration_term
                         self.time_Bi += time.time() - t2
 

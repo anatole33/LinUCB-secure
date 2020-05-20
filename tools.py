@@ -11,11 +11,19 @@ rng = np.random.RandomState(1)
 random.seed(1)
 
 # Return a reward for an arm x and the secret theta
+# We used a noise equal to -1 or 1 in the paper.
+##def pull(x, theta):
+##        noise = [-1,1]
+##        index = int(random.uniform(0, 1) < 1/2)
+##        r = x.dot(theta)
+##        return r + noise[index]
+
+# Return a reward for an arm x and the secret theta
+# We changed the noise the a normal distribution
 def pull(x, theta):
-        noise = [-1,1]
-        index = int(random.uniform(0, 1) < 1/2)
+        noise = np.random.normal(0, 0.1)
         r = x.dot(theta)
-        return r + noise[index]
+        return r + noise
 
 # Return a list of a random permutation over [1,K]
 def generate_permutation(K):
@@ -76,23 +84,17 @@ def compute_theta(i, inv, b, quotient, remainder):
 # arms by n the number of cores.
 # In case the remainder is not zero, the first cores compute one more B
 # until remainder is consumed.
-def compute_B(i, list_K, O, inv, t, d, delta, R, quotient, remainder):
+def compute_B(i, list_K, O, exploration_term, quotient, remainder):
         res = []
         if remainder > 0:
                 if (remainder - i) > 0:
                         for x in range(i * quotient + i, (i+1) * quotient + i + 1):
-                                exploration_term = 2 * R * math.sqrt(d * list_K[x].dot(inv).dot(
-                                        list_K[x]) * math.log(t) * math.log((t**2)/delta)) + math.log(t)
                                 res.append(list_K[x].dot(O) + exploration_term)
                 else:
                         for x in range(i * quotient + remainder, (i+1) * quotient + remainder):
-                                exploration_term = 2 * R * math.sqrt(d * list_K[x].dot(inv).dot(
-                                        list_K[x]) * math.log(t) * math.log((t**2)/delta)) + math.log(t)
                                 res.append(list_K[x].dot(O) + exploration_term)
         else:
                 for x in range(i * quotient, (i + 1) * quotient):
-                        exploration_term = 2 * R * math.sqrt(d * list_K[x].dot(inv).dot(
-                                list_K[x]) * math.log(t) * math.log((t**2)/delta)) * math.log(t)
                         res.append(list_K[x].dot(O) + exploration_term)
         return res
         
@@ -128,7 +130,7 @@ def run_experiment(algo):
         key_size = int(sys.argv[6])
         n_cores = int(sys.argv[7])
         gamma = 1
-        delta = 1/N
+        delta = 0.001
         # For real data experiment using MovieLens, we use users and movies from a file.
         # d must be equal to the number of features in Users and Movies matrices
         if len(sys.argv) > 8:

@@ -48,6 +48,12 @@ class Player_p(Player):
         # Initialization + exploration-exploitation phase
         def compute(self):
                 ti = time.time()
+                # Compute the maximum norm among the arms
+                norm_max = 0
+                for arm in self.list_K:
+                        norm = arm.dot(arm)
+                        if norm > norm_max:
+                                norm_max = norm
                 b = np.array([self.pk_comp.encrypt(0)] * self.d)
                 # Randomly select an arm and initialize the variables
                 a = random.randint(0, self.K - 1)
@@ -79,9 +85,12 @@ class Player_p(Player):
                         
                         # Time the computation of the Bi
                         t2 = time.time()
+                        exploration_term = self.R * math.sqrt(self.d * math.log((1 + (t *
+                                        norm_max)/self.gamma)/self.delta)) + math.sqrt(
+                                        self.gamma) * math.log(t)
                         list_B = []
-                        res2 = p.starmap(compute_B, [(i, self.list_K, O, inv, t, self.d,
-                                self.delta, self.R, quotient_K, remainder_K) for i in range(self.n)])
+                        res2 = p.starmap(compute_B, [(i, self.list_K, O, exploration_term,
+                                        quotient_K, remainder_K) for i in range(self.n)])
                         for i in range(self.n):
                                 list_B += res2[i]
                         self.time_Bi += time.time() - t2

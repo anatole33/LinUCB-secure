@@ -58,6 +58,12 @@ class Cloud():
     
         def compute(self):
                 ti = time.time()
+                # Compute the maximum norm among the arms
+                norm_max = 0
+                for arm in self.list_K:
+                        norm = arm.dot(arm)
+                        if norm > norm_max:
+                                norm_max = norm
                 # List of the B of each arm. It's the upper bound term
                 list_B = [0] * self.K
                 # Total reward
@@ -73,10 +79,10 @@ class Cloud():
                 for t in range(1, self.N):
                         inv = np.linalg.inv(A + self.gamma * np.identity(self.d))
                         O = inv.dot(b)
+                        exploration_term = self.R * math.sqrt(self.d * math.log((1 + (t *
+                                        norm_max)/self.gamma)/self.delta)) + math.sqrt(
+                                        self.gamma) * math.log(t)
                         for i in range(self.K):
-                                exploration_term = 2 * self.R * math.sqrt(self.d *
-                                        self.list_K[i].dot(inv).dot(self.list_K[i]) *
-                                        math.log(t) * math.log ((t**2)/self.delta)) + math.log(t)
                                 list_B[i] = self.list_K[i].dot(O) + exploration_term
                         o = generate_permutation(self.K)
                         # Choose one arm among all equal maximums using the random permutation

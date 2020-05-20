@@ -25,7 +25,7 @@ class Spectral_Player(Player):
                 T = np.add(self.A, self.lamb * np.identity(self.K))
                 d = 0
                 for i in range(self.K):
-                        if (i-1)*self.A[i][i] <= self.N / math.log(1 + (self.N/self.lamb)):
+                        if (i-1) * self.A[i][i] <= self.N / math.log(1 + (self.N/self.lamb)):
                                 d = i
                 # Pull an arm at random and start updating the sum of rewards
                 x = random.randint(0, self.K-1)
