@@ -21,7 +21,7 @@ random.seed(1)
 # Return a reward for an arm x and the secret theta
 # We changed the noise the a normal distribution
 def pull(x, theta):
-        noise = np.random.normal(0, 0.1)
+        noise = rng.normal(0, 0.1)
         r = x.dot(theta)
         return r + noise
 
@@ -29,7 +29,7 @@ def pull(x, theta):
 def generate_permutation(K):
         sigma_dict = {}
         for element in range(1, K+1):
-                sigma_dict[element] = rng.randint(0, sys.maxsize)
+                sigma_dict[element] = random.randint(0, sys.maxsize)
                 # On Windows, sys.maxsize in out of bounds. Change it to pow(2,31)
         vals_sorted = sorted(sigma_dict.values())
         sigma = []
