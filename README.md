@@ -15,7 +15,7 @@ and plot functions.
 
 `script_compare_spectral` generates Figure **7** in folder `experiment_spectral`.
 
-All scripts generates the figures using the results of previous runs, the
+All scripts generate the figures using the results of previous runs, the
 `*.txt` files in experimental folders. If you wish to run again the algorithms,
 uncomment in the script of your interest the line starting with
 `#os.system("python3 " + algo + ".py "...`
