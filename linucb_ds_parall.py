@@ -51,9 +51,9 @@ class Player_p(Player):
                 # Compute the maximum norm among the arms
                 norm_max = 0
                 for arm in self.list_K:
-                        norm = arm.dot(arm)
-                        if norm > norm_max:
-                                norm_max = norm
+                        temp_norm = arm.dot(arm)
+                        if temp_norm > norm_max:
+                                norm_max = temp_norm
                 b = np.array([self.pk_comp.encrypt(0)] * self.d)
                 # Randomly select an arm and initialize the variables
                 a = random.randint(0, self.K - 1)
@@ -89,7 +89,7 @@ class Player_p(Player):
                                         norm_max)/self.gamma)/self.delta)) + math.sqrt(
                                         self.gamma) * math.log(t)
                         list_B = []
-                        res2 = p.starmap(compute_B, [(i, self.list_K, O, exploration_term,
+                        res2 = p.starmap(compute_B, [(i, self.list_K, O, inv, exploration_term,
                                         quotient_K, remainder_K) for i in range(self.n)])
                         for i in range(self.n):
                                 list_B += res2[i]
@@ -114,13 +114,14 @@ class Player_p(Player):
 # and returns the index of the maximal element
 # n is the number of cores used in parallelization
 class Comp_p(Comp):
-        def __init__(self, K, pk_dc, key_size, n):
+        def __init__(self, K, pk_comp, sk_comp, pk_dc, key_size, n):
                 t = time.time()
                 self.time = 0
                 self.K = K
                 self.pk_dc = pk_dc
                 self.n = n
-                self.pk, self.sk = paillier.generate_paillier_keypair(n_length=key_size)
+                self.pk = pk_comp
+                self.sk = sk_comp
                 self.time += time.time() - t
 
         # Decrypt the list of B using the parallelizer p
@@ -145,12 +146,14 @@ class Comp_p(Comp):
 # of arms and theta. key_size = the length of Paillier keys. n = the number
 # of cores for parallelization
 def linucb_ds_p(N, delta, gamma, d, theta, K, list_K, key_size=2048, n_cores=1): 
+        #generation of keys
+        pk_comp, sk_comp = paillier.generate_paillier_keypair(n_length=key_size)
+        pk_dc, sk_dc = paillier.generate_paillier_keypair(n_length=key_size)
+        
         t_start = time.time()
 
-        DC = DataClient(N, key_size)
-        pk_dc = DC.share_pk_dc()
-        comparator = Comp_p(K, pk_dc, key_size, n_cores)
-        pk_comp = comparator.share_pk_comp()
+        DC = DataClient(N, pk_dc, sk_dc, key_size)
+        comparator = Comp_p(K, pk_comp, sk_comp, pk_dc, key_size, n_cores)
         DO = DataOwner(pk_comp, theta)
         P = Player_p(pk_comp, delta, gamma, d, K, list_K, n_cores)
         P.comparator = comparator
@@ -177,3 +180,4 @@ def linucb_ds_p(N, delta, gamma, d, theta, K, list_K, key_size=2048, n_cores=1):
 
 if __name__ == "__main__":
         run_experiment(linucb_ds_p)
+

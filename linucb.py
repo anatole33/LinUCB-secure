@@ -40,10 +40,10 @@ class Cloud():
                 t = time.time()
                 self.delta = delta
                 self.gamma = gamma
-                self.R = 0.01
                 self.d = d
                 self.K = K
                 self.list_K = list_K
+                self.R = 0.01
                 self.time += time.time() - t
 
         def receive_theta(self, theta):
@@ -61,9 +61,9 @@ class Cloud():
                 # Compute the maximum norm among the arms
                 norm_max = 0
                 for arm in self.list_K:
-                        norm = arm.dot(arm)
-                        if norm > norm_max:
-                                norm_max = norm
+                        temp_norm = arm.dot(arm)
+                        if temp_norm > norm_max:
+                                norm_max = temp_norm
                 # List of the B of each arm. It's the upper bound term
                 list_B = [0] * self.K
                 # Total reward
@@ -83,7 +83,7 @@ class Cloud():
                                         norm_max)/self.gamma)/self.delta)) + math.sqrt(
                                         self.gamma) * math.log(t)
                         for i in range(self.K):
-                                list_B[i] = self.list_K[i].dot(O) + exploration_term
+                                list_B[i] = self.list_K[i].dot(O) + exploration_term * norm(self.list_K[i], inv)
                         o = generate_permutation(self.K)
                         # Choose one arm among all equal maximums using the random permutation
                         max_B = argmax(list_B, o)
@@ -129,3 +129,4 @@ def linucb(N, delta, gamma, d, theta, K, list_K, key_size=None, n=None):
 
 if __name__ == "__main__":
         run_experiment(linucb)
+

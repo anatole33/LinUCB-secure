@@ -21,6 +21,7 @@ def distance(u, v):
         for i in range(size):
                 dist += (u[i] - v[i])**2
         return dist
+
         
 # Take as input a file containing movie vectors and select K movies
 # starting from index_movies position.
@@ -94,10 +95,6 @@ def generate_all(K, index_movies, file_name):
         L = generate_L(D, W)
         return generate_decomposition(L, K)
 
-def norm(v, M):
-        return math.sqrt(v.dot(M).dot(v))
-
-
 # Compute a portion of the list of upper bounds. This fucntion is called
 # multiple times in parallel which allows to compute simultaneously different portions.
 # Parallel functions for theta and decrypt the list of B are unchanged from linucb.
@@ -153,4 +150,4 @@ def spectral_run_experiment(algo):
                 result[run] = algo(N, delta, lamb, theta, K, A, Q, B, key_size, n_cores)
 
         with open(output_file, 'w') as fp:
-                json.dump(result, fp)                      
+                json.dump(result, fp)

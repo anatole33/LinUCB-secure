@@ -54,6 +54,9 @@ def argmax(list_B, sigma):
                         i_m = i
         return i_m
 
+def norm(v, M):
+        return math.sqrt(v.dot(M).dot(v))
+
 
 #  -------  Parallelization functions  -------
 
@@ -84,18 +87,18 @@ def compute_theta(i, inv, b, quotient, remainder):
 # arms by n the number of cores.
 # In case the remainder is not zero, the first cores compute one more B
 # until remainder is consumed.
-def compute_B(i, list_K, O, exploration_term, quotient, remainder):
+def compute_B(i, list_K, O, inv, exploration_term, quotient, remainder):
         res = []
         if remainder > 0:
                 if (remainder - i) > 0:
                         for x in range(i * quotient + i, (i+1) * quotient + i + 1):
-                                res.append(list_K[x].dot(O) + exploration_term)
+                                res.append(list_K[x].dot(O) + exploration_term * norm(list_K[x], inv))
                 else:
                         for x in range(i * quotient + remainder, (i+1) * quotient + remainder):
-                                res.append(list_K[x].dot(O) + exploration_term)
+                                res.append(list_K[x].dot(O) + exploration_term * norm(list_K[x], inv))
         else:
                 for x in range(i * quotient, (i + 1) * quotient):
-                        res.append(list_K[x].dot(O) + exploration_term)
+                        res.append(list_K[x].dot(O) + exploration_term * norm(list_K[x], inv))
         return res
         
 # 'quotient' and 'remainder' refer to the euclidian division of K the number of

@@ -48,9 +48,9 @@ class Player_t(Player):
                 # Compute the maximum norm among the arms
                 norm_max = 0
                 for arm in self.list_K:
-                        norm = arm.dot(arm)
-                        if norm > norm_max:
-                                norm_max = norm
+                        temp_norm = arm.dot(arm)
+                        if temp_norm > norm_max:
+                                norm_max = temp_norm
                 # List of the B of each arm. It's the upper bound term
                 list_B = [0] * self.K
                 b = np.array([self.pk_comp.encrypt(0)] * self.d)
@@ -78,7 +78,7 @@ class Player_t(Player):
                                         norm_max)/self.gamma)/self.delta)) + math.sqrt(
                                         self.gamma) * math.log(t)
                         for i in range(self.K):
-                                list_B[i] = self.list_K[i].dot(O) + exploration_term
+                                list_B[i] = self.list_K[i].dot(O) + exploration_term * norm(self.list_K[i], inv)
                         self.time_Bi += time.time() - t2
 
                         # Don't add to self the time of decryption of Comp
@@ -99,12 +99,14 @@ class Player_t(Player):
 # of arms and theta. key_size = the length of Paillier keys. n = the number
 # of cores for parallelization
 def linucb_ds_t(N, delta, gamma, d, theta, K, list_K, key_size=2048, n=None):
+        #generation of keys
+        pk_comp, sk_comp = paillier.generate_paillier_keypair(n_length=key_size)
+        pk_dc, sk_dc = paillier.generate_paillier_keypair(n_length=key_size)
+        
         t_start = time.time()
 
-        DC = DataClient(N, key_size)
-        pk_dc = DC.share_pk_dc()
-        comparator = Comp(K, pk_dc, key_size)
-        pk_comp = comparator.share_pk_comp()
+        DC = DataClient(N, pk_dc, sk_dc, key_size)
+        comparator = Comp(K, pk_comp, sk_comp, pk_dc, key_size)
         DO = DataOwner(pk_comp, theta)
         P = Player_t(pk_comp, delta, gamma, d, K, list_K)
         P.comparator = comparator
@@ -131,3 +133,4 @@ def linucb_ds_t(N, delta, gamma, d, theta, K, list_K, key_size=2048, n=None):
 
 if __name__ == "__main__":
         run_experiment(linucb_ds_t)
+

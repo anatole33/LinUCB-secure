@@ -11,18 +11,16 @@ precision = pow(10, -26)
 # The data client generates paillier keys, shares his public key and
 # the budget with the cloud
 class DataClient():
-        def __init__(self, N, key_size):
+        def __init__(self, N, pk_dc, sk_dc, key_size):
                 t = time.time()
                 self.time = 0
                 self.N = N
-                self.pk, self.sk = paillier.generate_paillier_keypair(n_length=key_size)
+                self.pk = pk_dc
+                self.sk = sk_dc
                 self.time += time.time() - t
 
         def send_budget(self):
                 return self.N
-
-        def share_pk_dc(self):
-                return self.pk
 
         # At the end, receive the total reward and decrypt it using the private key
         def receive_sum(self, encrypted_s):
@@ -95,9 +93,9 @@ class Player():
                 # Compute the maximum norm among the arms
                 norm_max = 0
                 for arm in self.list_K:
-                        norm = arm.dot(arm)
-                        if norm > norm_max:
-                                norm_max = norm
+                        temp_norm = arm.dot(arm)
+                        if temp_norm > norm_max:
+                                norm_max = temp_norm
                 # List of the B of each arm. It's the upper bound term
                 list_B = [0] * self.K
                 b = np.array([self.pk_comp.encrypt(0)] * self.d)
@@ -118,7 +116,7 @@ class Player():
                                         norm_max)/self.gamma)/self.delta)) + math.sqrt(
                                         self.gamma) * math.log(t)
                         for i in range(self.K):
-                                list_B[i] = self.list_K[i].dot(O) + exploration_term
+                                list_B[i] = self.list_K[i].dot(O) + exploration_term * norm(self.list_K[i], inv)
 
                         # Don't add to self the time of decryption of Comp
                         self.time += time.time() - ti
@@ -156,16 +154,14 @@ class Player():
 # At each round, Comp is sent a list of B in a permuted order. He decrypts them
 # and returns the index of the maximal element
 class Comp():
-        def __init__(self, K, pk_dc, key_size):
+        def __init__(self, K, pk_comp, sk_comp, pk_dc, key_size):
                 t = time.time()
                 self.time = 0
                 self.K = K
                 self.pk_dc = pk_dc
-                self.pk, self.sk = paillier.generate_paillier_keypair(n_length=key_size)
+                self.pk = pk_comp
+                self.sk = sk_comp
                 self.time += time.time() - t
-
-        def share_pk_comp(self):
-                return self.pk
 
         # Decrypts and returns index max
         def max_bound(self, encrypted_list_B):
@@ -191,13 +187,15 @@ class Comp():
 # theta = the common pull() parameter. list_K = the arms. d = the dimension
 # of arms and theta. key_size = the length of Paillier keys. n = the number
 # of cores for parallelization
-def linucb_ds(N, delta, gamma, d, theta, K, list_K, key_size=2048, n=None): 
+def linucb_ds(N, delta, gamma, d, theta, K, list_K, key_size=2048, n=None):
+        #generation of keys
+        pk_comp, sk_comp = paillier.generate_paillier_keypair(n_length=key_size)
+        pk_dc, sk_dc = paillier.generate_paillier_keypair(n_length=key_size)
+        
         t_start = time.time()
 
-        DC = DataClient(N, key_size)
-        pk_dc = DC.share_pk_dc()
-        comparator = Comp(K, pk_dc, key_size)
-        pk_comp = comparator.share_pk_comp()
+        DC = DataClient(N, pk_dc, sk_dc, key_size)
+        comparator = Comp(K, pk_comp, sk_comp, pk_dc, key_size)
         DO = DataOwner(pk_comp, theta)
         P = Player(pk_comp, delta, gamma, d, K, list_K)
         P.comparator = comparator
@@ -221,3 +219,4 @@ def linucb_ds(N, delta, gamma, d, theta, K, list_K, key_size=2048, n=None):
 
 if __name__ == "__main__":
         run_experiment(linucb_ds)
+
