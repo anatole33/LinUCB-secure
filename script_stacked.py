@@ -57,7 +57,7 @@ for K in K_vals:
                 output_file = DIR + "n=" + str(n_cores) + "_K=" + str(K) + "_" + algo + ".txt"
                 #os.system("python3 " + algo + ".py " + str(nb_runs) + " " + str(N) + " "
                 #          + str(K) + " " +str(d) + " " + output_file + " "
-                #          + str(key_size) + " " + str(n_cores))
+                #          + str(key_size) + " " + str(n_cores)  + " " + str(0) + " " + str(0))
                 _, res = parse_json_output(output_file)
                 for key in keys:
                         aggregates_all[key].append(res["time of " + str(key)])

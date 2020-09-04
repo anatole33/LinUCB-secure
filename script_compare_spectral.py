@@ -29,7 +29,7 @@ for K in K_vals:
                 output_file = DIR + "N_K_d=" + str(K) + "_" + algo + ".txt"
                 #os.system("python3 " + algo + ".py " + str(nb_runs) + " " + str(N)
                 #          + " " + str(K) + " " + str(d) + " " + output_file + " "
-                #          + str(key_size) + " " + str(n_cores))
+                #          + str(key_size) + " " + str(n_cores) + " " + str(0) + " " + str(0))
                 aggregate_time, _ = parse_json_output(output_file)
                 aggregates_time[algo].append(aggregate_time)
 

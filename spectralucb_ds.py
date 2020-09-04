@@ -68,12 +68,14 @@ class Spectral_Player(Player):
 # key_size is the length of Paillier keys
 # n is the number of cores for parallelization
 def spectralucb_ds(N, delta, lamb, theta, K, A, Q, B, key_size=2048, n=None):
+        #generation of keys
+        pk_comp, sk_comp = paillier.generate_paillier_keypair(n_length=key_size)
+        pk_dc, sk_dc = paillier.generate_paillier_keypair(n_length=key_size)
+        
         t_start = time.time()
 
-        DC = DataClient(N, key_size)
-        pk_dc = DC.share_pk_dc()
-        comparator = Comp(K, pk_dc, key_size)
-        pk_comp = comparator.share_pk_comp()
+        DC = DataClient(N, pk_dc, sk_dc, key_size)
+        comparator = Comp(K, pk_comp, sk_comp, pk_dc, key_size)
         DO = DataOwner(pk_comp, theta)
         P = Spectral_Player(pk_comp, delta, lamb, K, A, Q, B)
         P.comparator = comparator
