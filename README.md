@@ -9,7 +9,7 @@ The same pattern applies for spectralucb files.
 and plot functions.
 
 `script_stacked.py` generates Figure **6(a)** and **6(b)** in folder
-`experiment_n_cores/50_5` and `experiment_n_cores/6_18` respectively.
+`experiment_n_cores/linucb_50_5` and `experiment_n_cores/linucb_6_18` respectively.
 
 `script_n_cores.py` generates Figure **6(c)** in folder `experiment_n_cores/2048`.
 
