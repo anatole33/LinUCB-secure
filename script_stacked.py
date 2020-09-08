@@ -8,7 +8,7 @@ warnings.simplefilter("ignore")
 
 #  Script of Figures 6(a) 6(b)
 
-nb_runs = 1
+nb_runs = 5
 key_size = 2048
 n_cores_vals = [1, 2, 3, 4, 5, 6]
 algo = "linucb_ds_parall"
