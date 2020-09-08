@@ -13,7 +13,7 @@ and plot functions.
 
 `script_n_cores.py` generates Figure **6(c)** in folder `experiment_n_cores/2048`.
 
-`script_compare_spectral` generates Figure **7** in folder `experiment_spectral`.
+`script_compare_spectral.py` generates Figure **7** in folder `experiment_spectral`.
 
 All scripts generate the figures using the results of previous runs, the
 `*.txt` files in experimental folders. If you wish to run again the algorithms,
