@@ -9,16 +9,14 @@ warnings.simplefilter("ignore")
 #  Script of Figure 6(c)
 
 nb_runs = 1
-#key_size_vals = [1024, 2048]
 key_size_vals = [2048]
 n_cores_vals = [1,2,3,4,5,6]
 algo_name = "linucb_ds_parall"
-#K_vals = [[10, 40, 70, 100], [10, 30, 50, 70]]
 K_vals = [[10,30,50,70]]
 N = 200
 
 for k in range(len(key_size_vals)):
-        DIR = "experiment_n_cores/" + str(key_size_vals[k]) + "/"
+        DIR = "experiment_n_cores/linucb_K_varies/"
         os.system("mkdir -p " + DIR)
         aggregates_time = dict()
         # If number of core is 1, don't use parallelized version
