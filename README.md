@@ -11,7 +11,7 @@ and plot functions.
 `script_stacked.py` generates Figure **6(a)** and **6(b)** in folder
 `experiment_n_cores/linucb_50_5` and `experiment_n_cores/linucb_6_18` respectively.
 
-`script_n_cores.py` generates Figure **6(c)** in folder `experiment_n_cores/2048`.
+`script_n_cores.py` generates Figure **6(c)** in folder `experiment_n_cores/linucb_K_varies`.
 
 `script_compare_spectral.py` generates Figure **7** in folder `experiment_spectral`.
 
