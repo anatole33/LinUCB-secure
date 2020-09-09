@@ -8,12 +8,12 @@ warnings.simplefilter("ignore")
 
 #  Script of Figure 7
 
-nb_runs = 1
+nb_runs = 5
 n_cores = 6
 key_size = 2048
 algos = ["linucb_ds", "spectralucb_ds", "linucb_ds_parall", "spectralucb_ds_parall"]
 algos_names = ["LinUCB-DS 1 core", "SpectralUCB-DS 1 core", "LinUCB-DS 6 cores", "SpectralUCB-DS 6 cores"]
-K_vals = [10,15,20,25,30]
+K_vals = [10, 20 ,30]
 
 DIR = "experiment_spectral/"
 os.system("mkdir -p " + DIR)
