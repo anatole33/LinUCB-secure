@@ -12,7 +12,7 @@ nb_runs = 1
 n_cores = 6
 key_size = 2048
 algos = ["linucb_ds", "spectralucb_ds", "linucb_ds_parall", "spectralucb_ds_parall"]
-algos_names = ["LinUCB-DS", "SpectralUCB-DS", "LinUCB-DS 6 cores", "SpectralUCB-DS 6 cores"]
+algos_names = ["LinUCB-DS 1 core", "SpectralUCB-DS 1 core", "LinUCB-DS 6 cores", "SpectralUCB-DS 6 cores"]
 K_vals = [10,15,20,25,30]
 
 DIR = "experiment_spectral/"

@@ -2,7 +2,7 @@ This is the code related to the paper **Secure Cumulative Reward Maximization
 in Linear Stochastic Bandits**.
 
 `linucb.py` is the unencrypted and undistributed version whereas `linucb_ds.py`
-has both. `linucb_ds_parall` allows parallelization as described in Section 5
+has both. `linucb_ds_parall.py` allows parallelization as described in Section 5
 **Experiments**.
 The same pattern applies for spectralucb files.
 `tools.py` and `spectralucb_tools.py` contain useful functions for the algorithms
