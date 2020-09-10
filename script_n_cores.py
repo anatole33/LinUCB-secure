@@ -8,11 +8,11 @@ warnings.simplefilter("ignore")
 
 #  Script of Figure 6(c)
 
-nb_runs = 1
+nb_runs = 5
 key_size_vals = [2048]
 n_cores_vals = [1,2,3,4,5,6]
 algo_name = "linucb_ds_parall"
-K_vals = [[10,30,50,70]]
+K_vals = [[10, 20, 30]]
 N = 200
 
 for k in range(len(key_size_vals)):
