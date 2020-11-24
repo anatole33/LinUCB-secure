@@ -1,11 +1,11 @@
-This is the code related to the paper 
+This is the code related to our paper <https://link.springer.com/chapter/10.1007%2F978-3-030-62576-4_13>
 
     @inproceedings{CDLS20,
       author    = {Ciucanu, R. and Delabrouille, A. and Lafourcade, P. and Soare, M.},
       title     = {{Secure Cumulative Reward Maximization in Linear Stochastic Bandits}},
       booktitle = {International Conference on Provable and Practical Security (ProvSec)},
       year      = {2020},
-      pages     = {Accepted. To appear.}
+      pages     = {257--277}
     }
 
 `linucb.py` is the unencrypted and undistributed version whereas `linucb_ds.py`
